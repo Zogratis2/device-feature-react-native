@@ -14,7 +14,17 @@ export const getCurrentAddress = async () => {
       longitude: loc.coords.longitude,
     });
 
-    return `${address[0].city}, ${address[0].country}`;
+    const a = address[0];
+    const parts = [
+      a.streetNumber,
+      a.street,
+      a.district,
+      a.city,
+      a.region,
+      a.country,
+    ].filter(Boolean);
+
+    return parts.join(", ");
   } catch (e) {
     return "Unknown Location";
   }

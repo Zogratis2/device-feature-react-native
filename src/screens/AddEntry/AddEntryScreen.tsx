@@ -36,7 +36,6 @@ export default function AddEntryScreen({ navigation }: any) {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Reset everything when screen is focused
       setImageUri(null);
       setAddress("");
       formikRef.current?.resetForm();
@@ -128,9 +127,19 @@ export default function AddEntryScreen({ navigation }: any) {
             {({ handleChange, handleSubmit, values, errors, touched }: any) => (
               <View style={styles.formContainer}>
 
-                {/* Image Preview or Placeholder */}
+                {/* Image Preview — only shows after taking picture */}
                 {imageUri ? (
-                  <Image source={{ uri: imageUri }} style={styles.image} />
+                  <>
+                    <Image source={{ uri: imageUri }} style={styles.image} />
+
+                    {/* Address — only shows after taking picture */}
+                    {address !== "" && (
+                      <View style={styles.locationRow}>
+                        <Ionicons name="location-outline" size={16} color="#6C63FF" />
+                        <Text style={styles.address}>{address}</Text>
+                      </View>
+                    )}
+                  </>
                 ) : (
                   <View style={styles.imagePlaceholder}>
                     <Ionicons name="image-outline" size={64} color="#ccc" />
@@ -165,14 +174,6 @@ export default function AddEntryScreen({ navigation }: any) {
                     multiline
                   />
                 </View>
-
-                {/* Address */}
-                {address !== "" && (
-                  <View style={styles.locationRow}>
-                    <Ionicons name="location-outline" size={16} color="#6C63FF" />
-                    <Text style={styles.address}>{address}</Text>
-                  </View>
-                )}
 
                 {/* Take Picture Button */}
                 <Pressable style={styles.photoButton} onPress={takePicture}>
