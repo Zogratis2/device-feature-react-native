@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Image,
   Alert,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  TouchableOpacity,
+  Pressable,
   Keyboard,
   Text,
 } from "react-native";
@@ -17,11 +17,14 @@ import { sendNotification } from "../../utils/notification";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "./AddEntryStyles";
+import { ThemeContext } from "../../context/ThemeContext";
+import { getStyles } from "./AddEntryStyles";
 
 export default function AddEntryScreen({ navigation }: any) {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [address, setAddress] = useState("");
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
+  const styles = getStyles(darkMode);
 
   const takePicture = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -71,8 +74,17 @@ export default function AddEntryScreen({ navigation }: any) {
 
           {/* Header */}
           <View style={styles.header}>
-            <Ionicons name="create-outline" size={28} color="#6C63FF" />
-            <Text style={styles.headerTitle}>New Entry</Text>
+            <View style={styles.headerLeft}>
+              <Ionicons name="create-outline" size={28} color="#6C63FF" />
+              <Text style={styles.headerTitle}>New Entry</Text>
+            </View>
+            <Pressable onPress={() => setDarkMode(!darkMode)}>
+              <Ionicons
+                name={darkMode ? "sunny-outline" : "moon-outline"}
+                size={28}
+                color="#6C63FF"
+              />
+            </Pressable>
           </View>
 
           <Formik
@@ -102,19 +114,19 @@ export default function AddEntryScreen({ navigation }: any) {
                 )}
 
                 {/* Take Picture Button */}
-                <TouchableOpacity style={styles.photoButton} onPress={takePicture}>
+                <Pressable style={styles.photoButton} onPress={takePicture}>
                   <Ionicons name="camera-outline" size={20} color="#fff" />
                   <Text style={styles.buttonText}>Take Picture</Text>
-                </TouchableOpacity>
+                </Pressable>
 
                 {/* Save Entry Button */}
-                <TouchableOpacity
+                <Pressable
                   style={styles.saveButton}
                   onPress={() => handleSubmit()}
                 >
                   <Ionicons name="save-outline" size={20} color="#fff" />
                   <Text style={styles.buttonText}>Save Entry</Text>
-                </TouchableOpacity>
+                </Pressable>
 
               </View>
             )}
