@@ -8,6 +8,7 @@ import {
   Pressable,
   Keyboard,
   Text,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -47,8 +48,16 @@ export default function AddEntryScreen({ navigation }: any) {
     }
   };
 
-  const saveEntry = async () => {
-    if (!imageUri) return;
+  const saveEntry = async (values: { title: string; notes: string }) => {
+    if (!imageUri) {
+      Alert.alert("Please take a picture first");
+      return;
+    }
+
+    if (!values.title.trim()) {
+      Alert.alert("Please enter a title");
+      return;
+    }
 
     const entries = await getEntries();
 
@@ -56,6 +65,8 @@ export default function AddEntryScreen({ navigation }: any) {
       id: Date.now().toString(),
       image: imageUri,
       address,
+      title: values.title,
+      notes: values.notes,
     };
 
     const updated = [...entries, newEntry];
@@ -88,11 +99,14 @@ export default function AddEntryScreen({ navigation }: any) {
           </View>
 
           <Formik
-            initialValues={{}}
-            validationSchema={Yup.object({})}
+            initialValues={{ title: "", notes: "" }}
+            validationSchema={Yup.object({
+              title: Yup.string().required("Title is required"),
+              notes: Yup.string(),
+            })}
             onSubmit={saveEntry}
           >
-            {({ handleSubmit }: any) => (
+            {({ handleChange, handleSubmit, values, errors, touched }: any) => (
               <View style={styles.formContainer}>
 
                 {/* Image Preview or Placeholder */}
@@ -104,6 +118,34 @@ export default function AddEntryScreen({ navigation }: any) {
                     <Text style={styles.imagePlaceholderText}>No photo yet</Text>
                   </View>
                 )}
+
+                {/* Title Input */}
+                <View style={styles.inputContainer}>
+                  <Ionicons name="pencil-outline" size={18} color="#6C63FF" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Entry title..."
+                    placeholderTextColor={darkMode ? "#555" : "#bbb"}
+                    value={values.title}
+                    onChangeText={handleChange("title")}
+                  />
+                </View>
+                {touched.title && errors.title && (
+                  <Text style={styles.errorText}>{errors.title}</Text>
+                )}
+
+                {/* Notes Input */}
+                <View style={styles.inputContainer}>
+                  <Ionicons name="document-text-outline" size={18} color="#6C63FF" />
+                  <TextInput
+                    style={[styles.input, styles.notesInput]}
+                    placeholder="Write your notes..."
+                    placeholderTextColor={darkMode ? "#555" : "#bbb"}
+                    value={values.notes}
+                    onChangeText={handleChange("notes")}
+                    multiline
+                  />
+                </View>
 
                 {/* Address */}
                 {address !== "" && (

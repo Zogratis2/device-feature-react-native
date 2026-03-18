@@ -7,12 +7,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "./HomeScreenStyles";
-
-type Entry = {
-  id: string;
-  image: string;
-  address: string;
-};
+import type { Entry } from "../../types/props";
 
 export default function HomeScreen() {
   const [entries, setEntries] = useState<Entry[]>([]);
