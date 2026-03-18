@@ -5,7 +5,6 @@ export const getStyles = (darkMode: boolean) =>
     container: {
       flex: 1,
       backgroundColor: darkMode ? "#1A1A2E" : "#F4F3FF",
-      paddingBottom: 20,
     },
     header: {
       flexDirection: "row",
@@ -30,15 +29,27 @@ export const getStyles = (darkMode: boolean) =>
       color: darkMode ? "#fff" : "#2D2D2D",
     },
     formContainer: {
-      flex: 1,
       paddingHorizontal: 20,
-      paddingTop: 20,
+      paddingTop: 24,
+      paddingBottom: 40,
+      gap: 16,
+    },
+    imageWrapper: {
+      borderRadius: 16,
+      overflow: "hidden",
     },
     image: {
       width: "100%",
       height: 200,
       borderRadius: 16,
-      marginBottom: 16,
+    },
+    removeImageButton: {
+      position: "absolute",
+      top: 8,
+      right: 8,
+      backgroundColor: "#fff",
+      borderRadius: 50,
+      elevation: 4,
     },
     imagePlaceholder: {
       width: "100%",
@@ -47,13 +58,24 @@ export const getStyles = (darkMode: boolean) =>
       backgroundColor: darkMode ? "#16213E" : "#fff",
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: 16,
       elevation: 2,
     },
-    imagePlaceholderText: {
-      color: darkMode ? "#555" : "#ccc",
+    imagePlaceholderError: {
+      borderWidth: 1.5,
+      borderColor: "#E53935",
+    },
+    locationRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: darkMode ? "#16213E" : "#fff",
+      padding: 10,
+    },
+    address: {
       fontSize: 14,
-      marginTop: 8,
+      color: "#6C63FF",
+      fontWeight: "500",
+      flexShrink: 1,
     },
     inputContainer: {
       flexDirection: "row",
@@ -61,10 +83,13 @@ export const getStyles = (darkMode: boolean) =>
       backgroundColor: darkMode ? "#16213E" : "#fff",
       borderRadius: 12,
       paddingHorizontal: 12,
-      paddingVertical: 10,
-      marginBottom: 12,
+      paddingVertical: 12,
       elevation: 2,
       gap: 8,
+    },
+    inputError: {
+      borderWidth: 1.5,
+      borderColor: "#E53935",
     },
     inputIcon: {
       marginTop: 2,
@@ -82,19 +107,13 @@ export const getStyles = (darkMode: boolean) =>
       color: "#E53935",
       fontSize: 12,
       marginTop: -8,
-      marginBottom: 8,
       marginLeft: 4,
     },
-    locationRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 16,
-      gap: 6,
-    },
-    address: {
-      fontSize: 14,
-      color: "#6C63FF",
-      fontWeight: "500",
+    photoErrorText: {
+      color: "#E53935",
+      fontSize: 12,
+      marginTop: 4, 
+      marginLeft: 4,
     },
     photoButton: {
       flexDirection: "row",
@@ -103,7 +122,6 @@ export const getStyles = (darkMode: boolean) =>
       backgroundColor: "#6C63FF",
       padding: 16,
       borderRadius: 14,
-      marginBottom: 12,
       gap: 8,
       elevation: 3,
     },

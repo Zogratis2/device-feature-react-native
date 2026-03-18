@@ -9,6 +9,7 @@ import {
   Keyboard,
   Text,
   TextInput,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -30,6 +31,7 @@ type FormValues = {
 export default function AddEntryScreen({ navigation }: any) {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [address, setAddress] = useState("");
+  const [photoError, setPhotoError] = useState(false);
   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const styles = getStyles(darkMode);
   const formikRef = useRef<FormikProps<FormValues>>(null);
@@ -38,6 +40,7 @@ export default function AddEntryScreen({ navigation }: any) {
     React.useCallback(() => {
       setImageUri(null);
       setAddress("");
+      setPhotoError(false);
       formikRef.current?.resetForm();
     }, [])
   );
@@ -58,14 +61,20 @@ export default function AddEntryScreen({ navigation }: any) {
 
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
+      setPhotoError(false);
       const addr = await getCurrentAddress();
       setAddress(addr);
     }
   };
 
+  const removePhoto = () => {
+    setImageUri(null);
+    setAddress("");
+  };
+
   const saveEntry = async (values: FormValues) => {
     if (!imageUri) {
-      Alert.alert("Please take a picture first");
+      setPhotoError(true);
       return;
     }
 
@@ -91,6 +100,7 @@ export default function AddEntryScreen({ navigation }: any) {
 
     setImageUri(null);
     setAddress("");
+    setPhotoError(false);
     formikRef.current?.resetForm();
     navigation.navigate("Home");
   };
@@ -125,30 +135,51 @@ export default function AddEntryScreen({ navigation }: any) {
             onSubmit={saveEntry}
           >
             {({ handleChange, handleSubmit, values, errors, touched }: any) => (
-              <View style={styles.formContainer}>
-
-                {/* Image Preview — only shows after taking picture */}
+              <ScrollView
+                contentContainerStyle={styles.formContainer}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+              >
+                {/* Image Preview or Placeholder */}
                 {imageUri ? (
-                  <>
+                  <View style={styles.imageWrapper}>
                     <Image source={{ uri: imageUri }} style={styles.image} />
-
-                    {/* Address — only shows after taking picture */}
+                    {/* X Button */}
+                    <Pressable onPress={removePhoto} style={styles.removeImageButton}>
+                      <Ionicons name="close-circle" size={30} color="#E53935" />
+                    </Pressable>
+                    {/* Address */}
                     {address !== "" && (
                       <View style={styles.locationRow}>
                         <Ionicons name="location-outline" size={16} color="#6C63FF" />
                         <Text style={styles.address}>{address}</Text>
                       </View>
                     )}
-                  </>
+                  </View>
                 ) : (
-                  <View style={styles.imagePlaceholder}>
-                    <Ionicons name="image-outline" size={64} color="#ccc" />
-                    <Text style={styles.imagePlaceholderText}>No photo yet</Text>
+                  <View>
+                    <View style={[
+                      styles.imagePlaceholder,
+                      photoError && styles.imagePlaceholderError,
+                    ]}>
+                      <Ionicons
+                        name="image-outline"
+                        size={64}
+                        color={photoError ? "#E53935" : darkMode ? "#555" : "#ccc"}
+                      />
+                    </View>
+                    {/* Photo error */}
+                    {photoError && (
+                      <Text style={styles.photoErrorText}>Photo is required</Text>
+                    )}
                   </View>
                 )}
 
                 {/* Title Input */}
-                <View style={styles.inputContainer}>
+                <View style={[
+                  styles.inputContainer,
+                  touched.title && errors.title && styles.inputError
+                ]}>
                   <Ionicons name="pencil-outline" size={18} color="#6C63FF" />
                   <TextInput
                     style={styles.input}
@@ -189,13 +220,18 @@ export default function AddEntryScreen({ navigation }: any) {
                 {/* Save Entry Button */}
                 <Pressable
                   style={styles.saveButton}
-                  onPress={() => handleSubmit()}
+                  onPress={() => {
+                    if (!imageUri) {
+                      setPhotoError(true);
+                    }
+                    handleSubmit();
+                  }}
                 >
                   <Ionicons name="save-outline" size={20} color="#fff" />
                   <Text style={styles.buttonText}>Save Entry</Text>
                 </Pressable>
 
-              </View>
+              </ScrollView>
             )}
           </Formik>
         </SafeAreaView>
