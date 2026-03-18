@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import {
   View,
   Image,
@@ -15,17 +15,33 @@ import * as ImagePicker from "expo-image-picker";
 import { getCurrentAddress } from "../../utils/location";
 import { getEntries, saveEntries } from "../../utils/storage";
 import { sendNotification } from "../../utils/notification";
-import { Formik } from "formik";
+import { Formik, FormikProps } from "formik";
 import * as Yup from "yup";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "./AddEntryStyles";
+import { useFocusEffect } from "@react-navigation/native";
+
+type FormValues = {
+  title: string;
+  notes: string;
+};
 
 export default function AddEntryScreen({ navigation }: any) {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [address, setAddress] = useState("");
   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const styles = getStyles(darkMode);
+  const formikRef = useRef<FormikProps<FormValues>>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset everything when screen is focused
+      setImageUri(null);
+      setAddress("");
+      formikRef.current?.resetForm();
+    }, [])
+  );
 
   const takePicture = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -48,7 +64,7 @@ export default function AddEntryScreen({ navigation }: any) {
     }
   };
 
-  const saveEntry = async (values: { title: string; notes: string }) => {
+  const saveEntry = async (values: FormValues) => {
     if (!imageUri) {
       Alert.alert("Please take a picture first");
       return;
@@ -75,6 +91,8 @@ export default function AddEntryScreen({ navigation }: any) {
     await sendNotification();
 
     setImageUri(null);
+    setAddress("");
+    formikRef.current?.resetForm();
     navigation.navigate("Home");
   };
 
@@ -99,6 +117,7 @@ export default function AddEntryScreen({ navigation }: any) {
           </View>
 
           <Formik
+            innerRef={formikRef}
             initialValues={{ title: "", notes: "" }}
             validationSchema={Yup.object({
               title: Yup.string().required("Title is required"),
