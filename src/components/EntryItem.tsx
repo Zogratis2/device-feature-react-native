@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, Image, Pressable, Modal } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { ThemeContext } from "../context/ThemeContext";
 import type { Entry } from "../types/props";
 
 export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (id: string) => void }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const { darkMode } = useContext(ThemeContext);
 
   return (
     <View style={{
-      backgroundColor: "#fff",
+      backgroundColor: darkMode ? "#16213E" : "#fff",
       borderRadius: 16,
       marginHorizontal: 16,
       marginVertical: 8,
@@ -22,25 +24,43 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
       <View style={{ padding: 12 }}>
 
         {/* Title */}
-        <Text style={{ fontSize: 16, fontWeight: "700", color: "#2D2D2D", marginBottom: 4 }}>
+        <Text style={{ 
+          fontSize: 16, 
+          fontWeight: "700", 
+          color: darkMode ? "#fff" : "#2D2D2D", 
+          marginBottom: 4 
+        }}>
           {item.title}
         </Text>
 
         {/* Notes */}
         {item.notes !== "" && (
-          <Text style={{ fontSize: 14, color: "#666", marginBottom: 8 }}>
+          <Text style={{ 
+            fontSize: 14, 
+            color: darkMode ? "#aaa" : "#666", 
+            marginBottom: 8 
+          }}>
             {item.notes}
           </Text>
         )}
 
         {/* Location and Delete Row */}
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 6, flex: 1, marginRight: 8 }}>
-            <Ionicons name="location-outline" size={16} color="#6C63FF" />
-            <Text style={{ fontSize: 13, color: "#6C63FF", fontWeight: "500", flexShrink: 1 }}>
-              {item.address}
-            </Text>
-          </View>
+          
+          {/* Conditionally render location so it doesn't show an empty pin for old entries */}
+          {item.address ? (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 6, flex: 1, marginRight: 8 }}>
+              <Ionicons name="location-outline" size={16} color="#6C63FF" />
+              <Text 
+                numberOfLines={2} 
+                style={{ fontSize: 13, color: "#6C63FF", fontWeight: "500", flexShrink: 1 }}
+              >
+                {item.address}
+              </Text>
+            </View>
+          ) : (
+            <View style={{ flex: 1 }} /> /* Empty view to keep the delete button on the right */
+          )}
 
           {/* Delete Button */}
           <Pressable
@@ -79,7 +99,7 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
           paddingHorizontal: 32,
         }}>
           <View style={{
-            backgroundColor: "#fff",
+            backgroundColor: darkMode ? "#16213E" : "#fff",
             borderRadius: 20,
             padding: 24,
             width: "100%",
@@ -88,7 +108,7 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
           }}>
             {/* Icon */}
             <View style={{
-              backgroundColor: "#FFE5E5",
+              backgroundColor: darkMode ? "#2D1B1B" : "#FFE5E5", // Adjusted trash background for dark mode
               borderRadius: 50,
               padding: 16,
               marginBottom: 16,
@@ -100,7 +120,7 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
             <Text style={{
               fontSize: 18,
               fontWeight: "700",
-              color: "#2D2D2D",
+              color: darkMode ? "#fff" : "#2D2D2D",
               marginBottom: 8,
             }}>
               Remove Entry
@@ -109,12 +129,12 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
             {/* Message */}
             <Text style={{
               fontSize: 14,
-              color: "#888",
+              color: darkMode ? "#aaa" : "#888",
               textAlign: "center",
               marginBottom: 24,
             }}>
               Are you sure you want to remove{" "}
-              <Text style={{ fontWeight: "700", color: "#2D2D2D" }}>
+              <Text style={{ fontWeight: "700", color: darkMode ? "#fff" : "#2D2D2D" }}>
                 "{item.title}"
               </Text>
               ? This action cannot be undone.
@@ -130,7 +150,9 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
                   paddingVertical: 14,
                   borderRadius: 12,
                   alignItems: "center",
-                  backgroundColor: pressed ? "#eee" : "#F4F3FF",
+                  backgroundColor: pressed 
+                    ? (darkMode ? "#2D2D2D" : "#eee") 
+                    : (darkMode ? "#1A1A2E" : "#F4F3FF"),
                   elevation: 1,
                 })}>
                 <Text style={{ fontWeight: "700", color: "#6C63FF", fontSize: 15 }}>
