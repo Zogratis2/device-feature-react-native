@@ -31,8 +31,9 @@ export default function AppNavigator() {
           backgroundColor: '#fff',
           borderTopWidth: 0,
           elevation: 10,
-          height: 60,
-          paddingBottom: 8,
+          height: 80,
+          paddingBottom: 24,
+          paddingTop: 8,
         },
         headerShown: false,
       })}
