@@ -4,6 +4,7 @@ export type Entry = {
   address: string;
   title: string;
   notes: string;
+  date?: string;
 };
 
 export type RootTabParamList = {

@@ -53,6 +53,9 @@ export default function AddEntryScreen({ navigation }: any) {
       return;
     }
 
+    // SMART TRICK: Start finding the location right now, in the background!
+    const locationPromise = getCurrentAddress();
+
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 1,
@@ -62,7 +65,12 @@ export default function AddEntryScreen({ navigation }: any) {
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
       setPhotoError(false);
-      const addr = await getCurrentAddress();
+      
+      // Briefly show a placeholder just in case they snapped the photo super fast
+      setAddress("Locating..."); 
+      
+      // Wait for the background location fetch to finish (it's usually done by now)
+      const addr = await locationPromise;
       setAddress(addr);
     }
   };
@@ -85,12 +93,21 @@ export default function AddEntryScreen({ navigation }: any) {
 
     const entries = await getEntries();
 
+    // Create a readable date like "Oct 24, 2023"
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
     const newEntry = {
       id: Date.now().toString(),
       image: imageUri,
       address,
       title: values.title,
       notes: values.notes,
+      date: formattedDate, // Added the date here!
     };
 
     const updated = [...entries, newEntry];
@@ -148,11 +165,19 @@ export default function AddEntryScreen({ navigation }: any) {
                     <Pressable onPress={removePhoto} style={styles.removeImageButton}>
                       <Ionicons name="close-circle" size={30} color="#E53935" />
                     </Pressable>
-                    {/* Address */}
+                    
+                    {/* Address - Editable TextInput */}
                     {address !== "" && (
                       <View style={styles.locationRow}>
                         <Ionicons name="location-outline" size={16} color="#6C63FF" />
-                        <Text style={styles.address}>{address}</Text>
+                        <TextInput
+                          style={styles.addressInput}
+                          value={address}
+                          onChangeText={setAddress}
+                          placeholder="Location..."
+                          placeholderTextColor={darkMode ? "#555" : "#bbb"}
+                          multiline
+                        />
                       </View>
                     )}
                   </View>

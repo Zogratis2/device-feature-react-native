@@ -3,11 +3,11 @@ import * as Location from "expo-location";
 export const getCurrentAddress = async (): Promise<string> => {
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") throw new Error("Permission denied");
+    // If permission is denied, just return an empty string to ignore it
+    if (status !== "granted") return "";
 
-    // Force high accuracy and don't accept cached locations older than 5 seconds
     const loc = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Highest,
+      accuracy: Location.Accuracy.BestForNavigation,
     });
 
     const addressArray = await Location.reverseGeocodeAsync({
@@ -18,30 +18,27 @@ export const getCurrentAddress = async (): Promise<string> => {
     if (addressArray.length > 0) {
       const a = addressArray[0];
       
-      // Sometimes 'name' holds the specific building, 'district' holds the barangay,
-      // and 'subregion' holds the city/municipality if 'city' is null.
       const parts: (string | null)[] = [
-        a.name,
+        a.name !== a.street ? a.name : null, 
         a.streetNumber,
         a.street,
         a.district,
-        a.city || a.subregion, 
+        a.city || a.subregion,
         a.region,
         a.country,
       ];
 
-      // Filter out null/undefined and tell TS that the resulting array only contains strings
       const validParts = parts.filter((part): part is string => Boolean(part));
-
-      // Remove duplicate strings (e.g., if 'name' and 'street' are identical)
       const uniqueParts = [...new Set(validParts)];
 
       return uniqueParts.join(", ");
     }
 
-    return "Unknown Location";
+    // If the array is empty, return an empty string
+    return "";
   } catch (e: unknown) {
+    // If the GPS completely fails, log it but return an empty string so the app doesn't break
     console.error("Location Error: ", e);
-    return "Unknown Location";
+    return "";
   }
 };

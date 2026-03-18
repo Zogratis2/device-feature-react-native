@@ -23,15 +23,31 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
       />
       <View style={{ padding: 12 }}>
 
-        {/* Title */}
-        <Text style={{ 
-          fontSize: 16, 
-          fontWeight: "700", 
-          color: darkMode ? "#fff" : "#2D2D2D", 
-          marginBottom: 4 
-        }}>
-          {item.title}
-        </Text>
+        {/* --- NEW: Title and Date Row --- */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
+          {/* Title */}
+          <Text style={{ 
+            fontSize: 16, 
+            fontWeight: "700", 
+            color: darkMode ? "#fff" : "#2D2D2D", 
+            flex: 1, // Ensures long titles wrap and don't push the date off-screen
+            marginRight: 8 
+          }}>
+            {item.title}
+          </Text>
+
+          {/* Date */}
+          {item.date ? (
+            <Text style={{ 
+              fontSize: 12, 
+              color: darkMode ? "#aaa" : "#888", 
+              fontWeight: "600",
+              marginTop: 2 // A tiny push down so it centers perfectly with the taller title text
+            }}>
+              {item.date}
+            </Text>
+          ) : null}
+        </View>
 
         {/* Notes */}
         {item.notes !== "" && (
@@ -44,10 +60,10 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
           </Text>
         )}
 
-        {/* Location and Delete Row */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        {/* Location and Delete Row (Bottom) */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
           
-          {/* Conditionally render location so it doesn't show an empty pin for old entries */}
+          {/* Left Side: Location */}
           {item.address ? (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6, flex: 1, marginRight: 8 }}>
               <Ionicons name="location-outline" size={16} color="#6C63FF" />
@@ -59,10 +75,10 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
               </Text>
             </View>
           ) : (
-            <View style={{ flex: 1 }} /> /* Empty view to keep the delete button on the right */
+            <View style={{ flex: 1 }} /> 
           )}
 
-          {/* Delete Button */}
+          {/* Right Side: Just the Delete Button now! */}
           <Pressable
             onPress={() => setModalVisible(true)}
             style={({ pressed }: { pressed: boolean }) => ({
@@ -81,6 +97,7 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
               Remove
             </Text>
           </Pressable>
+
         </View>
       </View>
 
@@ -108,7 +125,7 @@ export default function EntryItem({ item, onDelete }: { item: Entry; onDelete: (
           }}>
             {/* Icon */}
             <View style={{
-              backgroundColor: darkMode ? "#2D1B1B" : "#FFE5E5", // Adjusted trash background for dark mode
+              backgroundColor: darkMode ? "#2D1B1B" : "#FFE5E5",
               borderRadius: 50,
               padding: 16,
               marginBottom: 16,

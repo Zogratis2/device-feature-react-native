@@ -64,6 +64,8 @@ export const getStyles = (darkMode: boolean) =>
       borderWidth: 1.5,
       borderColor: "#E53935",
     },
+    
+    /* --- NEW LOCATION STYLES HERE --- */
     locationRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -71,12 +73,15 @@ export const getStyles = (darkMode: boolean) =>
       backgroundColor: darkMode ? "#16213E" : "#fff",
       padding: 10,
     },
-    address: {
+    addressInput: {
+      flex: 1,
       fontSize: 14,
       color: "#6C63FF",
       fontWeight: "500",
-      flexShrink: 1,
+      padding: 0, // Removes default Android padding so it aligns nicely with the icon
     },
+    /* -------------------------------- */
+
     inputContainer: {
       flexDirection: "row",
       alignItems: "flex-start",
