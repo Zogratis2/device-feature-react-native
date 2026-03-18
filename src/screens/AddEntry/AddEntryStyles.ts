@@ -57,7 +57,7 @@ export const getStyles = (darkMode: boolean) =>
     },
     inputContainer: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "flex-start",
       backgroundColor: darkMode ? "#16213E" : "#fff",
       borderRadius: 12,
       paddingHorizontal: 12,
@@ -65,6 +65,9 @@ export const getStyles = (darkMode: boolean) =>
       marginBottom: 12,
       elevation: 2,
       gap: 8,
+    },
+    inputIcon: {
+      marginTop: 2,
     },
     input: {
       flex: 1,

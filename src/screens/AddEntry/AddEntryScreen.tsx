@@ -164,7 +164,12 @@ export default function AddEntryScreen({ navigation }: any) {
 
                 {/* Notes Input */}
                 <View style={styles.inputContainer}>
-                  <Ionicons name="document-text-outline" size={18} color="#6C63FF" />
+                  <Ionicons
+                    name="document-text-outline"
+                    size={18}
+                    color="#6C63FF"
+                    style={styles.inputIcon}
+                  />
                   <TextInput
                     style={[styles.input, styles.notesInput]}
                     placeholder="Write your notes..."
