@@ -64,8 +64,8 @@ export const getStyles = (darkMode: boolean) =>
       borderWidth: 1.5,
       borderColor: "#E53935",
     },
-    
-    /* --- NEW LOCATION STYLES HERE --- */
+
+    /* --- LOCATION STYLES --- */
     locationRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -78,9 +78,9 @@ export const getStyles = (darkMode: boolean) =>
       fontSize: 14,
       color: "#6C63FF",
       fontWeight: "500",
-      padding: 0, // Removes default Android padding so it aligns nicely with the icon
+      padding: 0,
     },
-    /* -------------------------------- */
+    /* ----------------------- */
 
     inputContainer: {
       flexDirection: "row",
@@ -117,7 +117,7 @@ export const getStyles = (darkMode: boolean) =>
     photoErrorText: {
       color: "#E53935",
       fontSize: 12,
-      marginTop: 4, 
+      marginTop: 4,
       marginLeft: 4,
     },
     photoButton: {
@@ -125,6 +125,16 @@ export const getStyles = (darkMode: boolean) =>
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#6C63FF",
+      padding: 16,
+      borderRadius: 14,
+      gap: 8,
+      elevation: 3,
+    },
+    retakeButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#F57C00",
       padding: 16,
       borderRadius: 14,
       gap: 8,

@@ -65,10 +65,10 @@ export default function AddEntryScreen({ navigation }: any) {
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
       setPhotoError(false);
-      
+
       // Briefly show a placeholder just in case they snapped the photo super fast
-      setAddress("Locating..."); 
-      
+      setAddress("Locating...");
+
       // Wait for the background location fetch to finish (it's usually done by now)
       const addr = await locationPromise;
       setAddress(addr);
@@ -107,7 +107,7 @@ export default function AddEntryScreen({ navigation }: any) {
       address,
       title: values.title,
       notes: values.notes,
-      date: formattedDate, // Added the date here!
+      date: formattedDate,
     };
 
     const updated = [...entries, newEntry];
@@ -165,7 +165,7 @@ export default function AddEntryScreen({ navigation }: any) {
                     <Pressable onPress={removePhoto} style={styles.removeImageButton}>
                       <Ionicons name="close-circle" size={30} color="#E53935" />
                     </Pressable>
-                    
+
                     {/* Address - Editable TextInput */}
                     {address !== "" && (
                       <View style={styles.locationRow}>
@@ -236,10 +236,19 @@ export default function AddEntryScreen({ navigation }: any) {
                   />
                 </View>
 
-                {/* Take Picture Button */}
-                <Pressable style={styles.photoButton} onPress={takePicture}>
-                  <Ionicons name="camera-outline" size={20} color="#fff" />
-                  <Text style={styles.buttonText}>Take Picture</Text>
+                {/* Take Picture / Retake Photo Button */}
+                <Pressable
+                  style={imageUri ? styles.retakeButton : styles.photoButton}
+                  onPress={takePicture}
+                >
+                  <Ionicons
+                    name={imageUri ? "refresh-outline" : "camera-outline"}
+                    size={20}
+                    color="#fff"
+                  />
+                  <Text style={styles.buttonText}>
+                    {imageUri ? "Retake Photo" : "Take Picture"}
+                  </Text>
                 </Pressable>
 
                 {/* Save Entry Button */}
