@@ -29,6 +29,14 @@ export const getStyles = (darkMode: boolean) =>
       color: darkMode ? "#aaa" : "#999",
       marginTop: 2,
     },
+    entryCount: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: "#6C63FF",
+      paddingHorizontal: 24,
+      paddingTop: 12,
+      paddingBottom: 4,
+    },
     emptyContainer: {
       flex: 1,
       justifyContent: "center",

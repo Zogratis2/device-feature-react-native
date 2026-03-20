@@ -48,6 +48,10 @@ export default function HomeScreen() {
             />
           </Pressable>
         </View>
+
+        {/* Entry Count */}
+        <Text style={styles.entryCount}>{entries.length} Entries</Text>
+
         <View style={styles.emptyContainer}>
           <Ionicons name="book-outline" size={64} color="#ccc" />
           <Text style={styles.emptyText}>No Entries yet</Text>
@@ -72,6 +76,10 @@ export default function HomeScreen() {
           />
         </Pressable>
       </View>
+
+      {/* Entry Count */}
+      <Text style={styles.entryCount}>{entries.length} Entries</Text>
+
       <FlatList<Entry>
         data={entries}
         keyExtractor={(item: Entry) => item.id}
