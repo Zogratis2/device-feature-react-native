@@ -10,6 +10,7 @@ import {
   Text,
   TextInput,
   ScrollView,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
@@ -32,6 +33,7 @@ export default function AddEntryScreen({ navigation }: any) {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [address, setAddress] = useState("");
   const [photoError, setPhotoError] = useState(false);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const styles = getStyles(darkMode);
   const formikRef = useRef<FormikProps<FormValues>>(null);
@@ -41,6 +43,7 @@ export default function AddEntryScreen({ navigation }: any) {
       setImageUri(null);
       setAddress("");
       setPhotoError(false);
+      setRemoveModalVisible(false);
       formikRef.current?.resetForm();
     }, [])
   );
@@ -53,7 +56,6 @@ export default function AddEntryScreen({ navigation }: any) {
       return;
     }
 
-    // SMART TRICK: Start finding the location right now, in the background!
     const locationPromise = getCurrentAddress();
 
     const result = await ImagePicker.launchCameraAsync({
@@ -65,11 +67,7 @@ export default function AddEntryScreen({ navigation }: any) {
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
       setPhotoError(false);
-
-      // Briefly show a placeholder just in case they snapped the photo super fast
       setAddress("Locating...");
-
-      // Wait for the background location fetch to finish (it's usually done by now)
       const addr = await locationPromise;
       setAddress(addr);
     }
@@ -78,6 +76,7 @@ export default function AddEntryScreen({ navigation }: any) {
   const removePhoto = () => {
     setImageUri(null);
     setAddress("");
+    setRemoveModalVisible(false);
   };
 
   const saveEntry = async (values: FormValues) => {
@@ -93,7 +92,6 @@ export default function AddEntryScreen({ navigation }: any) {
 
     const entries = await getEntries();
 
-    // Create a readable date like "Oct 24, 2023"
     const today = new Date();
     const formattedDate = today.toLocaleDateString("en-US", {
       month: "short",
@@ -161,12 +159,16 @@ export default function AddEntryScreen({ navigation }: any) {
                 {imageUri ? (
                   <View style={styles.imageWrapper}>
                     <Image source={{ uri: imageUri }} style={styles.image} />
-                    {/* X Button */}
-                    <Pressable onPress={removePhoto} style={styles.removeImageButton}>
+
+                    {/* X Button — opens modal */}
+                    <Pressable
+                      onPress={() => setRemoveModalVisible(true)}
+                      style={styles.removeImageButton}
+                    >
                       <Ionicons name="close-circle" size={30} color="#E53935" />
                     </Pressable>
 
-                    {/* Address - Editable TextInput */}
+                    {/* Address */}
                     {address !== "" && (
                       <View style={styles.locationRow}>
                         <Ionicons name="location-outline" size={16} color="#6C63FF" />
@@ -193,7 +195,6 @@ export default function AddEntryScreen({ navigation }: any) {
                         color={photoError ? "#E53935" : darkMode ? "#555" : "#ccc"}
                       />
                     </View>
-                    {/* Photo error */}
                     {photoError && (
                       <Text style={styles.photoErrorText}>Photo is required</Text>
                     )}
@@ -268,6 +269,97 @@ export default function AddEntryScreen({ navigation }: any) {
               </ScrollView>
             )}
           </Formik>
+
+          {/* Remove Photo Confirmation Modal */}
+          <Modal
+            transparent
+            animationType="fade"
+            visible={removeModalVisible}
+            onRequestClose={() => setRemoveModalVisible(false)}
+          >
+            <View style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 32,
+            }}>
+              <View style={{
+                backgroundColor: darkMode ? "#16213E" : "#fff",
+                borderRadius: 20,
+                padding: 24,
+                width: "100%",
+                alignItems: "center",
+                elevation: 10,
+              }}>
+                {/* Icon */}
+                <View style={{
+                  backgroundColor: "#FFE5E5",
+                  borderRadius: 50,
+                  padding: 16,
+                  marginBottom: 16,
+                }}>
+                  <Ionicons name="image" size={32} color="#E53935" />
+                </View>
+
+                {/* Title */}
+                <Text style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: darkMode ? "#fff" : "#2D2D2D",
+                  marginBottom: 8,
+                }}>
+                  Remove Photo
+                </Text>
+
+                {/* Message */}
+                <Text style={{
+                  fontSize: 14,
+                  color: darkMode ? "#aaa" : "#888",
+                  textAlign: "center",
+                  marginBottom: 24,
+                }}>
+                  Are you sure you want to remove this photo? This action cannot be undone.
+                </Text>
+
+                {/* Buttons */}
+                <View style={{ flexDirection: "row", gap: 12, width: "100%" }}>
+                  {/* Cancel */}
+                  <Pressable
+                    onPress={() => setRemoveModalVisible(false)}
+                    style={({ pressed }: { pressed: boolean }) => ({
+                      flex: 1,
+                      paddingVertical: 14,
+                      borderRadius: 12,
+                      alignItems: "center",
+                      backgroundColor: pressed ? "#eee" : "#F4F3FF",
+                      elevation: 1,
+                    })}>
+                    <Text style={{ fontWeight: "700", color: "#6C63FF", fontSize: 15 }}>
+                      Cancel
+                    </Text>
+                  </Pressable>
+
+                  {/* Confirm Remove */}
+                  <Pressable
+                    onPress={removePhoto}
+                    style={({ pressed }: { pressed: boolean }) => ({
+                      flex: 1,
+                      paddingVertical: 14,
+                      borderRadius: 12,
+                      alignItems: "center",
+                      backgroundColor: pressed ? "#c62828" : "#E53935",
+                      elevation: 2,
+                    })}>
+                    <Text style={{ fontWeight: "700", color: "#fff", fontSize: 15 }}>
+                      Remove
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          </Modal>
+
         </SafeAreaView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
